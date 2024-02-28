@@ -33,4 +33,10 @@ public class AccountServiceImpl implements AccountService {
     public List<Account> listAllAccount() {
         return accountRepository.findAll();
     }
+
+    @Override
+    public void deleteAccount(UUID id) {
+        accountRepository.findById(id).setAccountStatus(AccountStatus.DELETED);
+
+    }
 }
