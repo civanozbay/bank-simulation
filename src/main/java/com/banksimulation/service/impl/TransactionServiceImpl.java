@@ -10,12 +10,14 @@ import com.banksimulation.model.Transaction;
 import com.banksimulation.repository.AccountRepository;
 import com.banksimulation.repository.TransactionRepository;
 import com.banksimulation.service.TransactionService;
+import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
-import java.sql.Date;
+
+import java.util.Date;
 import java.util.List;
 import java.util.UUID;
-
+@Component
 public class TransactionServiceImpl implements TransactionService {
 
 
@@ -26,15 +28,7 @@ public class TransactionServiceImpl implements TransactionService {
         this.transactionRepository=transactionRepository;
         this.accountRepository=accountRepository;
     }
-    @Override
-    public Transaction makeTransfer(Account sender, Account receiver, BigDecimal amount, Date creationDate, String message) {
-        validateAccount(sender,receiver);
-        checkAccountOwnership(sender,receiver);
-        executeBalanceAndUpdateIfRequired(amount,sender,receiver);
 
-        return createTransaction(sender,receiver,amount,creationDate,message);
-
-    }
 
     private Transaction createTransaction(Account sender, Account receiver, BigDecimal amount, Date creationDate, String message) {
         Transaction transaction = Transaction.builder().
@@ -84,6 +78,16 @@ public class TransactionServiceImpl implements TransactionService {
 
     private void findAccountById(UUID id) {
         accountRepository.findById(id);
+    }
+
+
+    @Override
+    public Transaction makeTransfer(Account sender, Account receiver, BigDecimal amount, Date creationDate, String message) {
+        validateAccount(sender,receiver);
+        checkAccountOwnership(sender,receiver);
+        executeBalanceAndUpdateIfRequired(amount,sender,receiver);
+
+        return createTransaction(sender,receiver,amount,creationDate,message);
     }
 
     @Override
