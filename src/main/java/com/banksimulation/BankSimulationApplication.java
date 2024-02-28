@@ -19,15 +19,15 @@ public class BankSimulationApplication {
 
 		ApplicationContext container = SpringApplication.run(BankSimulationApplication.class, args);
 
-//		AccountService accountService = container.getBean(AccountService.class);
-//		TransactionService transactionService = container.getBean(TransactionService.class);
-//
-//		Account sender = accountService.createNewAccount(BigDecimal.valueOf(70), new Date(), AccountType.CHECKING, 1L);
-//		Account receiver = accountService.createNewAccount(BigDecimal.valueOf(50), new Date(), AccountType.SAVING, 1L);
-//
-//		transactionService.makeTransfer(sender, receiver, BigDecimal.valueOf(40), new Date(), "Transaction 1");
-//
-//		transactionService.findAllTransaction().forEach(System.out::println);
+		AccountService accountService = container.getBean(AccountService.class);
+		TransactionService transactionService = container.getBean(TransactionService.class);
+
+		Account sender = accountService.createNewAccount(BigDecimal.valueOf(50), new Date(), AccountType.CHECKING, 1L);
+		Account receiver = accountService.createNewAccount(BigDecimal.valueOf(50), new Date(), AccountType.SAVING, 1L);
+		Account receiver2 = accountService.createNewAccount(BigDecimal.valueOf(100), new Date(), AccountType.SAVING, 2L);
+		transactionService.makeTransfer(sender, receiver, BigDecimal.valueOf(40), new Date(), "Transaction 1");
+
+
 	}
 
 }
