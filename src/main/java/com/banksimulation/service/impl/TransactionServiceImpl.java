@@ -17,6 +17,8 @@ import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
+
 @Component
 public class TransactionServiceImpl implements TransactionService {
 
@@ -54,9 +56,10 @@ public class TransactionServiceImpl implements TransactionService {
     }
 
     private void checkAccountOwnership(Account sender, Account receiver) {
-        if(sender.getAccountType().equals(AccountType.SAVING)
-                ||receiver.getAccountType().equals(AccountType.SAVING) && !sender.getUserId().equals(receiver.getUserId())){
-            throw new AccountOwnerShipException("If one of the account is saving,userId must be the same");
+        if((sender.getAccountType().equals(AccountType.SAVING)
+                ||receiver.getAccountType().equals(AccountType.SAVING))&& !sender.getUserId().equals(receiver.getUserId()))
+        {
+            throw new AccountOwnerShipException("If one of the account is saving, userId must be the same");
         }
 
     }
@@ -94,4 +97,12 @@ public class TransactionServiceImpl implements TransactionService {
     public List<Transaction> findAllTransaction() {
         return transactionRepository.findAll();
     }
+
+    @Override
+    public List<Transaction> findTransactionListById(UUID id) {
+        return transactionRepository.transactionList.stream().
+            filter(transaction -> transaction.getSender().equals(id) || transaction.getReceiver().equals(id)).
+                collect(Collectors.toList());
+    }
+
 }

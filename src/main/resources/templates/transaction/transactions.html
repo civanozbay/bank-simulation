@@ -13,7 +13,7 @@
 <div class="container my-5">
     <div class="row">
         <div class="col-md-6">
-            <div>
+            <div th:if="${transactions.size()==0}">
                 <h2>No Transactions yet!</h2>
             </div>
             <div>
@@ -29,12 +29,12 @@
                     </tr>
                     </thead>
                     <tbody>
-                    <tr>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
+                    <tr th:each="transaction : ${transactions}">
+                        <td th:text="${transaction.getSender()}"></td>
+                        <td th:text="${transaction.getReceiver()}" ></td>
+                        <td th:text="${transaction.getAmount()}" ></td>
+                        <td th:text="${transaction.getCreationDate()}" ></td>
+                        <td th:text="${transaction.getMessage()}" ></td>
                     </tr>
                     </tbody>
                 </table>
