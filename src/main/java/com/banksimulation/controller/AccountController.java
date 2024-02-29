@@ -5,6 +5,7 @@ import com.banksimulation.enums.AccountType;
 import com.banksimulation.model.Account;
 import com.banksimulation.service.AccountService;
 
+import jakarta.validation.Valid;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -39,7 +40,7 @@ public class AccountController {
     }
 
     @PostMapping("/create")
-    public String createAccount(@ModelAttribute("account")Account account){
+    public String createAccount(@Valid @ModelAttribute("account")Account account){
         accountService.createNewAccount(account.getBalance(),account.getCreationDate(),account.getAccountType(),account.getUserId());
         System.out.println(accountService.listAllAccount());
         return "redirect:/index";
