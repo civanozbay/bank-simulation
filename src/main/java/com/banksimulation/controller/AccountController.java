@@ -40,13 +40,12 @@ public class AccountController {
 
     @PostMapping("/create")
     public String createAccount(@Valid @ModelAttribute("account") AccountDTO accountDTO){
-        accountService.createNewAccount(accountDTO.getBalance(), accountDTO.getCreationDate(), accountDTO.getAccountType(), accountDTO.getUserId());
-        System.out.println(accountService.listAllAccount());
+        accountService.createNewAccount(accountDTO);
         return "redirect:/index";
     }
 
     @GetMapping("/delete/{id}")
-    public String getDeleteAccount(@PathVariable("id") UUID id){
+    public String getDeleteAccount(@PathVariable("id") Long id){
         accountService.deleteAccount(id);
         return "redirect:/index";
     }
