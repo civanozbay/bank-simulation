@@ -14,7 +14,7 @@ public interface AccountService {
 
     List<AccountDTO> listAllAccount();
 
-    void deleteAccount(UUID id);
+    void deleteAccount(Long id);
 
-    AccountDTO retrieveById(UUID id);
+    AccountDTO retrieveById(Long id);
 }

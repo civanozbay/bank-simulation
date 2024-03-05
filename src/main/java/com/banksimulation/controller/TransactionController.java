@@ -12,7 +12,6 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 
 import java.util.Date;
-import java.util.UUID;
 
 @Controller
 public class TransactionController {
@@ -28,7 +27,7 @@ public class TransactionController {
     @GetMapping("/make-transfer")
     public String makeTransfer(Model model){
         model.addAttribute("accounts", accountService.listAllAccount());
-        model.addAttribute("transaction", TransactionDTO.builder().build());
+        model.addAttribute("transaction", new TransactionDTO());
         model.addAttribute("lastTransactions", transactionService.findAllTransaction());
         return "transaction/make-transfer";
     }
@@ -36,15 +35,15 @@ public class TransactionController {
     @PostMapping("/transfer")
     public String transfer(@ModelAttribute("transaction") TransactionDTO transactionDTO, Model model){
 
-        AccountDTO sender = accountService.retrieveById(transactionDTO.getSender());
-        AccountDTO receiver = accountService.retrieveById(transactionDTO.getReceiver());
+        AccountDTO sender = accountService.retrieveById(transactionDTO.getSender().getId());
+        AccountDTO receiver = accountService.retrieveById(transactionDTO.getReceiver().getId());
         transactionService.makeTransfer(sender,receiver, transactionDTO.getAmount(),new Date(), transactionDTO.getMessage());
 
         return "redirect:/make-transfer";
     }
 
     @GetMapping("/account-transaction/{id}")
-    public String accountTransaction(@PathVariable("id")UUID id,Model model){
+    public String accountTransaction(@PathVariable("id") Long id, Model model){
 
         model.addAttribute("transactions",transactionService.findTransactionListById(id));
 

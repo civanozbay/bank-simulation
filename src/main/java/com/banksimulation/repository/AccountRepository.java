@@ -22,7 +22,7 @@ public class AccountRepository {
         return accountDTOList;
     }
 
-    public AccountDTO findById(UUID id) {
+    public AccountDTO findById(Long id) {
         return accountDTOList.stream().
                 filter(account -> account.getId().equals(id)).
                 findAny().

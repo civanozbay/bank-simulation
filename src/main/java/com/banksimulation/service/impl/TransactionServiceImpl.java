@@ -32,12 +32,7 @@ public class TransactionServiceImpl implements TransactionService {
 
 
     private TransactionDTO createTransaction(AccountDTO sender, AccountDTO receiver, BigDecimal amount, Date creationDate, String message) {
-        TransactionDTO transactionDTO = TransactionDTO.builder().
-                sender(sender.getId()).
-                receiver(receiver.getId()).
-                amount(amount).
-                creationDate(creationDate).
-                message(message).build();
+        TransactionDTO transactionDTO = new TransactionDTO();
         return transactionRepository.save(transactionDTO);
     }
 
@@ -78,7 +73,7 @@ public class TransactionServiceImpl implements TransactionService {
         findAccountById(receiver.getId());
     }
 
-    private void findAccountById(UUID id) {
+    private void findAccountById(Long id) {
         accountRepository.findById(id);
     }
 
@@ -98,7 +93,7 @@ public class TransactionServiceImpl implements TransactionService {
     }
 
     @Override
-    public List<TransactionDTO> findTransactionListById(UUID id) {
+    public List<TransactionDTO> findTransactionListById(Long id) {
         return transactionRepository.transactionDTOList.stream().
             filter(transactionDTO -> transactionDTO.getSender().equals(id) || transactionDTO.getReceiver().equals(id)).
                 collect(Collectors.toList());
