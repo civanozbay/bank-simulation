@@ -3,16 +3,14 @@ package com.banksimulation.service.impl;
 import com.banksimulation.dto.AccountDTO;
 import com.banksimulation.entity.Account;
 import com.banksimulation.enums.AccountStatus;
-import com.banksimulation.enums.AccountType;
 import com.banksimulation.mapper.AccountMapper;
 import com.banksimulation.repository.AccountRepository;
 import com.banksimulation.service.AccountService;
 import org.springframework.stereotype.Component;
 
-import java.math.BigDecimal;
+
 import java.util.Date;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Component
@@ -52,5 +50,11 @@ public class AccountServiceImpl implements AccountService {
     public AccountDTO retrieveById(Long id)
     {
         return accountMapper.convertToDTO(accountRepository.findById(id).get());
+    }
+
+    @Override
+    public List<AccountDTO> listAllActiveAccounts() {
+        return accountRepository.findAllByAccountStatus(AccountStatus.ACTIVE).stream()
+                .map(account -> accountMapper.convertToDTO(account)).collect(Collectors.toList());
     }
 }

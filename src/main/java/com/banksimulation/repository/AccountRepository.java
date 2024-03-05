@@ -1,6 +1,7 @@
 package com.banksimulation.repository;
 
 import com.banksimulation.entity.Account;
+import com.banksimulation.enums.AccountStatus;
 import com.banksimulation.exception.RecordNotFoundException;
 import com.banksimulation.dto.AccountDTO;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -13,4 +14,5 @@ import java.util.UUID;
 
 public interface AccountRepository extends JpaRepository<Account,Long> {
 
+    List<Account> findAllByAccountStatus(AccountStatus active);
 }
