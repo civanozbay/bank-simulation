@@ -1,8 +1,7 @@
 package com.banksimulation.controller;
 
-import com.banksimulation.enums.AccountStatus;
+import com.banksimulation.dto.AccountDTO;
 import com.banksimulation.enums.AccountType;
-import com.banksimulation.model.Account;
 import com.banksimulation.service.AccountService;
 
 import jakarta.validation.Valid;
@@ -34,14 +33,14 @@ public class AccountController {
 
     @GetMapping("/create-form")
     public String getCreateForm(Model model){
-        model.addAttribute("account", Account.builder().build());
+        model.addAttribute("account", AccountDTO.builder().build());
         model.addAttribute("accountTypes", AccountType.values());
         return "account/create-account";
     }
 
     @PostMapping("/create")
-    public String createAccount(@Valid @ModelAttribute("account")Account account){
-        accountService.createNewAccount(account.getBalance(),account.getCreationDate(),account.getAccountType(),account.getUserId());
+    public String createAccount(@Valid @ModelAttribute("account") AccountDTO accountDTO){
+        accountService.createNewAccount(accountDTO.getBalance(), accountDTO.getCreationDate(), accountDTO.getAccountType(), accountDTO.getUserId());
         System.out.println(accountService.listAllAccount());
         return "redirect:/index";
     }

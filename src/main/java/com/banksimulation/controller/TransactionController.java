@@ -1,7 +1,7 @@
 package com.banksimulation.controller;
 
-import com.banksimulation.model.Account;
-import com.banksimulation.model.Transaction;
+import com.banksimulation.dto.AccountDTO;
+import com.banksimulation.dto.TransactionDTO;
 import com.banksimulation.service.AccountService;
 import com.banksimulation.service.TransactionService;
 import org.springframework.stereotype.Controller;
@@ -13,7 +13,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 
 import java.util.Date;
 import java.util.UUID;
-import java.util.stream.Stream;
 
 @Controller
 public class TransactionController {
@@ -29,17 +28,17 @@ public class TransactionController {
     @GetMapping("/make-transfer")
     public String makeTransfer(Model model){
         model.addAttribute("accounts", accountService.listAllAccount());
-        model.addAttribute("transaction", Transaction.builder().build());
+        model.addAttribute("transaction", TransactionDTO.builder().build());
         model.addAttribute("lastTransactions", transactionService.findAllTransaction());
         return "transaction/make-transfer";
     }
 
     @PostMapping("/transfer")
-    public String transfer(@ModelAttribute("transaction") Transaction transaction,Model model){
+    public String transfer(@ModelAttribute("transaction") TransactionDTO transactionDTO, Model model){
 
-        Account sender = accountService.retrieveById(transaction.getSender());
-        Account receiver = accountService.retrieveById(transaction.getReceiver());
-        transactionService.makeTransfer(sender,receiver,transaction.getAmount(),new Date(),transaction.getMessage());
+        AccountDTO sender = accountService.retrieveById(transactionDTO.getSender());
+        AccountDTO receiver = accountService.retrieveById(transactionDTO.getReceiver());
+        transactionService.makeTransfer(sender,receiver, transactionDTO.getAmount(),new Date(), transactionDTO.getMessage());
 
         return "redirect:/make-transfer";
     }

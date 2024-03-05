@@ -1,8 +1,8 @@
 package com.banksimulation.service.impl;
 
+import com.banksimulation.dto.AccountDTO;
 import com.banksimulation.enums.AccountStatus;
 import com.banksimulation.enums.AccountType;
-import com.banksimulation.model.Account;
 import com.banksimulation.repository.AccountRepository;
 import com.banksimulation.service.AccountService;
 import org.springframework.stereotype.Component;
@@ -22,15 +22,15 @@ public class AccountServiceImpl implements AccountService {
     }
 
     @Override
-    public Account createNewAccount(BigDecimal balance, Date creationDate, AccountType accountType, Long userId) {
-        Account account = Account.builder().id(UUID.randomUUID())
+    public AccountDTO createNewAccount(BigDecimal balance, Date creationDate, AccountType accountType, Long userId) {
+        AccountDTO accountDTO = AccountDTO.builder().id(UUID.randomUUID())
                 .userId(userId).accountType(accountType).
                 balance(balance).creationDate(new Date()).accountStatus(AccountStatus.ACTIVE).build();
-        return accountRepository.save(account);
+        return accountRepository.save(accountDTO);
     }
 
     @Override
-    public List<Account> listAllAccount() {
+    public List<AccountDTO> listAllAccount() {
         return accountRepository.findAll();
     }
 
@@ -41,7 +41,7 @@ public class AccountServiceImpl implements AccountService {
     }
 
     @Override
-    public Account retrieveById(UUID id) {
+    public AccountDTO retrieveById(UUID id) {
         return accountRepository.findById(id);
     }
 }

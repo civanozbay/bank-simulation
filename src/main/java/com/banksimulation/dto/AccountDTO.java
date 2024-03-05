@@ -1,21 +1,22 @@
-package com.banksimulation.model;
+package com.banksimulation.dto;
 
 import com.banksimulation.enums.AccountStatus;
 import com.banksimulation.enums.AccountType;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
-import lombok.Builder;
-import lombok.Data;
+import lombok.*;
 
 import java.math.BigDecimal;
 import java.util.Date;
 import java.util.UUID;
 
-@Data
-@Builder
-public class Account {
+@Getter
+@Setter
+@AllArgsConstructor
+@NoArgsConstructor
+public class AccountDTO {
 
-    private UUID id;
+    private Long id;
     @NotNull
     @Positive
     private BigDecimal balance;

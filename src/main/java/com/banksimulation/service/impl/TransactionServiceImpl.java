@@ -1,12 +1,11 @@
 package com.banksimulation.service.impl;
 
+import com.banksimulation.dto.AccountDTO;
+import com.banksimulation.dto.TransactionDTO;
 import com.banksimulation.enums.AccountType;
 import com.banksimulation.exception.AccountOwnerShipException;
 import com.banksimulation.exception.BadRequestException;
 import com.banksimulation.exception.BalanceNotSufficientException;
-import com.banksimulation.exception.RecordNotFoundException;
-import com.banksimulation.model.Account;
-import com.banksimulation.model.Transaction;
 import com.banksimulation.repository.AccountRepository;
 import com.banksimulation.repository.TransactionRepository;
 import com.banksimulation.service.TransactionService;
@@ -32,17 +31,17 @@ public class TransactionServiceImpl implements TransactionService {
     }
 
 
-    private Transaction createTransaction(Account sender, Account receiver, BigDecimal amount, Date creationDate, String message) {
-        Transaction transaction = Transaction.builder().
+    private TransactionDTO createTransaction(AccountDTO sender, AccountDTO receiver, BigDecimal amount, Date creationDate, String message) {
+        TransactionDTO transactionDTO = TransactionDTO.builder().
                 sender(sender.getId()).
                 receiver(receiver.getId()).
                 amount(amount).
                 creationDate(creationDate).
                 message(message).build();
-        return transactionRepository.save(transaction);
+        return transactionRepository.save(transactionDTO);
     }
 
-    private void executeBalanceAndUpdateIfRequired(BigDecimal amount, Account sender,Account receiver) {
+    private void executeBalanceAndUpdateIfRequired(BigDecimal amount, AccountDTO sender, AccountDTO receiver) {
         if(checkSenderBalance(sender,amount)){
             sender.setBalance((sender.getBalance().subtract(amount)));
             receiver.setBalance(receiver.getBalance().add(amount));
@@ -51,11 +50,11 @@ public class TransactionServiceImpl implements TransactionService {
         }
     }
 
-    private boolean checkSenderBalance(Account sender, BigDecimal amount) {
+    private boolean checkSenderBalance(AccountDTO sender, BigDecimal amount) {
         return sender.getBalance().subtract(amount).compareTo(BigDecimal.ZERO) >= 0;
     }
 
-    private void checkAccountOwnership(Account sender, Account receiver) {
+    private void checkAccountOwnership(AccountDTO sender, AccountDTO receiver) {
         if((sender.getAccountType().equals(AccountType.SAVING)
                 ||receiver.getAccountType().equals(AccountType.SAVING))&& !sender.getUserId().equals(receiver.getUserId()))
         {
@@ -64,7 +63,7 @@ public class TransactionServiceImpl implements TransactionService {
 
     }
 
-    private void validateAccount(Account sender, Account receiver) {
+    private void validateAccount(AccountDTO sender, AccountDTO receiver) {
         // if any of the account is null or if account ids are the same or if the account exist in the db
 
         if(sender==null || receiver==null){
@@ -85,7 +84,7 @@ public class TransactionServiceImpl implements TransactionService {
 
 
     @Override
-    public Transaction makeTransfer(Account sender, Account receiver, BigDecimal amount, Date creationDate, String message) {
+    public TransactionDTO makeTransfer(AccountDTO sender, AccountDTO receiver, BigDecimal amount, Date creationDate, String message) {
         validateAccount(sender,receiver);
         checkAccountOwnership(sender,receiver);
         executeBalanceAndUpdateIfRequired(amount,sender,receiver);
@@ -94,14 +93,14 @@ public class TransactionServiceImpl implements TransactionService {
     }
 
     @Override
-    public List<Transaction> findAllTransaction() {
+    public List<TransactionDTO> findAllTransaction() {
         return transactionRepository.findAll();
     }
 
     @Override
-    public List<Transaction> findTransactionListById(UUID id) {
-        return transactionRepository.transactionList.stream().
-            filter(transaction -> transaction.getSender().equals(id) || transaction.getReceiver().equals(id)).
+    public List<TransactionDTO> findTransactionListById(UUID id) {
+        return transactionRepository.transactionDTOList.stream().
+            filter(transactionDTO -> transactionDTO.getSender().equals(id) || transactionDTO.getReceiver().equals(id)).
                 collect(Collectors.toList());
     }
 
