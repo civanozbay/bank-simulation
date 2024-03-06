@@ -30,6 +30,7 @@ public class AccountServiceImpl implements AccountService {
         accountDTO.setCreationDate(new Date());
         Account account = accountMapper.convertToEntity(accountDTO);
         accountRepository.save(account);
+        System.out.println(accountDTO.getCreationDate());
     }
 
     @Override
@@ -56,5 +57,10 @@ public class AccountServiceImpl implements AccountService {
     public List<AccountDTO> listAllActiveAccounts() {
         return accountRepository.findAllByAccountStatus(AccountStatus.ACTIVE).stream()
                 .map(account -> accountMapper.convertToDTO(account)).collect(Collectors.toList());
+    }
+
+    @Override
+    public void updateAccount(AccountDTO accountDTO) {
+        accountRepository.save(accountMapper.convertToEntity(accountDTO));
     }
 }

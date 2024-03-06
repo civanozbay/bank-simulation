@@ -2,12 +2,16 @@ package com.banksimulation.service.impl;
 
 import com.banksimulation.dto.AccountDTO;
 import com.banksimulation.dto.TransactionDTO;
+import com.banksimulation.entity.Account;
 import com.banksimulation.enums.AccountType;
 import com.banksimulation.exception.AccountOwnerShipException;
 import com.banksimulation.exception.BadRequestException;
 import com.banksimulation.exception.BalanceNotSufficientException;
+import com.banksimulation.mapper.AccountMapper;
+import com.banksimulation.mapper.TransactionMapper;
 import com.banksimulation.repository.AccountRepository;
 import com.banksimulation.repository.TransactionRepository;
+import com.banksimulation.service.AccountService;
 import com.banksimulation.service.TransactionService;
 import org.springframework.stereotype.Component;
 
@@ -22,25 +26,37 @@ import java.util.stream.Collectors;
 public class TransactionServiceImpl implements TransactionService {
 
 
-    AccountRepository accountRepository;
+    AccountService accountService;
     TransactionRepository transactionRepository;
+    TransactionMapper transactionMapper;
+    AccountMapper accountMapper;
+    private final AccountRepository accountRepository;
 
-    public TransactionServiceImpl(AccountRepository accountRepository,TransactionRepository transactionRepository){
-        this.transactionRepository=transactionRepository;
-        this.accountRepository=accountRepository;
+    public TransactionServiceImpl(AccountService accountService, TransactionRepository transactionRepository, TransactionMapper transactionMapper, AccountMapper accountMapper,
+                                  AccountRepository accountRepository) {
+        this.accountService = accountService;
+        this.transactionRepository = transactionRepository;
+        this.transactionMapper = transactionMapper;
+        this.accountMapper = accountMapper;
+        this.accountRepository = accountRepository;
     }
 
 
-    private TransactionDTO createTransaction(AccountDTO sender, AccountDTO receiver, BigDecimal amount, Date creationDate, String message) {
-        TransactionDTO transactionDTO = new TransactionDTO();
-        return transactionRepository.save(transactionDTO);
-    }
+
+
 
     private void executeBalanceAndUpdateIfRequired(BigDecimal amount, AccountDTO sender, AccountDTO receiver) {
         if(checkSenderBalance(sender,amount)){
-            sender.setBalance((sender.getBalance().subtract(amount)));
+            sender.setBalance(sender.getBalance().subtract(amount));
             receiver.setBalance(receiver.getBalance().add(amount));
-        }else{
+            AccountDTO senderAcc = accountService.retrieveById(sender.getId());
+            senderAcc.setBalance(sender.getBalance());
+            AccountDTO receiverAcc = accountService.retrieveById(receiver.getId());
+            receiverAcc.setBalance(receiver.getBalance());
+            accountService.updateAccount(senderAcc);
+            accountService.updateAccount(receiverAcc);
+
+        }else {
             throw new BalanceNotSufficientException("Balance is not enough for this transfer");
         }
     }
@@ -73,30 +89,37 @@ public class TransactionServiceImpl implements TransactionService {
         findAccountById(receiver.getId());
     }
 
-    private void findAccountById(Long id) {
-        accountRepository.findById(id);
+    private AccountDTO findAccountById(Long id) {
+
+        return accountService.retrieveById(id);
     }
 
 
     @Override
-    public TransactionDTO makeTransfer(AccountDTO sender, AccountDTO receiver, BigDecimal amount, Date creationDate, String message) {
+    public void makeTransfer(AccountDTO sender, AccountDTO receiver, BigDecimal amount, Date creationDate, String message) {
         validateAccount(sender,receiver);
         checkAccountOwnership(sender,receiver);
         executeBalanceAndUpdateIfRequired(amount,sender,receiver);
 
-        return createTransaction(sender,receiver,amount,creationDate,message);
+        TransactionDTO transactionDTO = new TransactionDTO(sender,receiver,amount,message,creationDate);
+
+        transactionRepository.save(transactionMapper.convertToEntity(transactionDTO));
     }
 
     @Override
     public List<TransactionDTO> findAllTransaction() {
-        return transactionRepository.findAll();
+
+        return transactionRepository.findAll().stream().map(transaction -> transactionMapper.convertToDTO(transaction)).collect(Collectors.toList());
     }
 
     @Override
     public List<TransactionDTO> findTransactionListById(Long id) {
-        return transactionRepository.transactionDTOList.stream().
-            filter(transactionDTO -> transactionDTO.getSender().equals(id) || transactionDTO.getReceiver().equals(id)).
-                collect(Collectors.toList());
+        return transactionRepository.findTransactionListById(id).stream().map(transactionMapper::convertToDTO).collect(Collectors.toList());
+    }
+
+    @Override
+    public List<TransactionDTO> lastTransactions() {
+        return transactionRepository.findLastTenTransaction().stream().map(transactionMapper::convertToDTO).collect(Collectors.toList());
     }
 
 }

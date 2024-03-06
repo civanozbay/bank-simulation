@@ -1,6 +1,7 @@
 package com.banksimulation.service;
 
 import com.banksimulation.dto.AccountDTO;
+import com.banksimulation.entity.Account;
 import com.banksimulation.enums.AccountType;
 
 import java.math.BigDecimal;
@@ -19,4 +20,6 @@ public interface AccountService {
     AccountDTO retrieveById(Long id);
 
     List<AccountDTO> listAllActiveAccounts();
+
+    void updateAccount(AccountDTO accountDTO);
 }

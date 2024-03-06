@@ -26,14 +26,14 @@ public class TransactionController {
 
     @GetMapping("/make-transfer")
     public String makeTransfer(Model model){
-        model.addAttribute("accounts", accountService.listAllAccount());
-        model.addAttribute("transaction", new TransactionDTO());
+        model.addAttribute("accounts", accountService.listAllActiveAccounts());
+        model.addAttribute("transactionDTO", new TransactionDTO());
         model.addAttribute("lastTransactions", transactionService.findAllTransaction());
         return "transaction/make-transfer";
     }
 
     @PostMapping("/transfer")
-    public String transfer(@ModelAttribute("transaction") TransactionDTO transactionDTO, Model model){
+    public String transfer(@ModelAttribute("transactionDTO") TransactionDTO transactionDTO, Model model){
 
         AccountDTO sender = accountService.retrieveById(transactionDTO.getSender().getId());
         AccountDTO receiver = accountService.retrieveById(transactionDTO.getReceiver().getId());
@@ -42,7 +42,7 @@ public class TransactionController {
         return "redirect:/make-transfer";
     }
 
-    @GetMapping("/account-transaction/{id}")
+    @GetMapping("/transaction/{id}")
     public String accountTransaction(@PathVariable("id") Long id, Model model){
 
         model.addAttribute("transactions",transactionService.findTransactionListById(id));

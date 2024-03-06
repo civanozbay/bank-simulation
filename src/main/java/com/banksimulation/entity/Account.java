@@ -25,21 +25,21 @@ public class Account {
 
     private BigDecimal balance;
 
-    @Column(columnDefinition = "TIMESTAMP")
-    private LocalDate creationDate;
+    @Column(columnDefinition = "DATE")
+    private Date creationDate;
     @Enumerated(EnumType.STRING)
     private AccountType accountType;
 
     @Enumerated(EnumType.STRING)
     private AccountStatus accountStatus;
 
-    @OneToMany
-    private List<Transaction> transactionList;
+    private Long userId;
 
-    public Account(BigDecimal balance, AccountType accountType, LocalDate creationDate, AccountStatus accountStatus) {
+    public Account(BigDecimal balance, AccountType accountType, Date creationDate, AccountStatus accountStatus,Long userId) {
         this.balance = balance;
         this.accountType = accountType;
         this.creationDate = creationDate;
         this.accountStatus = accountStatus;
+        this.userId = userId;
     }
 }

@@ -28,12 +28,12 @@ public class Transaction {
     private BigDecimal amount;
     private String message;
     @Column(columnDefinition = "TIMESTAMP")
-    private LocalDate creationDate;
+    private Date creationDate;
 
 
 
 
-    public Transaction(BigDecimal amount, String message, LocalDate creationDate) {
+    public Transaction(BigDecimal amount, String message, Date creationDate) {
         this.amount = amount;
         this.message = message;
         this.creationDate = creationDate;
