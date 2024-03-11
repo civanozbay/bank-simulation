@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 
-<html xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 
 <head>
     <meta charset="utf-8">
@@ -15,6 +16,9 @@
 <body>
 <div class="container my-5">
     <div class="row">
+        <div>
+            <a class="dropdown-item" th:href="@{/logout}"><i class="fas fa-power-off mr-2"></i>Logout</a>
+        </div>
         <div class="col-md-6">
             <div th:if="${accountList.size()==0}">
 
@@ -31,7 +35,7 @@
                         <th>Balance</th>
                         <th>Account Type</th>
                         <th>CreationDate</th>
-                        <th>Delete</th>
+                        <th sec:authorize="hasAnyAuthority('Admin')">Delete</th>
                         <th>Account Transactions</th>
                     </tr>
                     </thead>
@@ -52,7 +56,7 @@
                     </tbody>
                 </table>
             </div>
-            <p class="my-5"><a th:href="@{/create-form}" class="btn btn-primary">Create Account<i class="fas fa-user-plus ml-2"></i></a></p>
+            <p class="my-5" sec:authorize="hasAnyAuthority('Admin')"><a th:href="@{/create-form}" class="btn btn-primary">Create Account<i class="fas fa-user-plus ml-2"></i></a></p>
             <p class="my-5"><a th:href="@{/make-transfer}" class="btn btn-primary">Make Transfer<i class="fas fa-user-plus ml-2"></i></a></p>
         </div>
     </div>
